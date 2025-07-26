@@ -3,292 +3,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hızlı Yazma Oyunu</title>
+    <title>Hızlı Yazma Yarışı</title>
     <style>
+        /* Genel Stil Ayarları */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
-            background: #000;
-            color: #fff;
-            font-family: 'Arial', sans-serif;
+            background: #1a1a2e; /* Koyu mor tonu */
+            color: #e0e0e0; /* Açık gri metin */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
-
         .container {
             width: 90%;
-            max-width: 1200px;
+            max-width: 900px; /* Maksimum genişliği düşürdüm */
             text-align: center;
+            background: #16213e; /* Koyu mavi tonu */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* Başlık ve Logo */
         .logo {
-            font-size: 3em;
+            font-size: 2.8em;
             font-weight: bold;
-            margin-bottom: 30px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
-            background-size: 400% 400%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientShift 3s ease infinite;
+            margin-bottom: 25px;
+            color: #0f3460; /* Daha sade bir mavi tonu */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
         }
 
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        /* Ekranlar (Giriş, Arama, Oyun) */
+        .screen-panel {
+            background: #0f3460; /* Daha koyu bir panel rengi */
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .login-screen {
-            background: rgba(255,255,255,0.1);
-            padding: 40px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
+        /* Giriş Alanı */
         .input-group {
             margin: 20px 0;
         }
-
-        input {
-            padding: 15px 20px;
-            font-size: 18px;
-            border: none;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.2);
-            color: #fff;
-            width: 300px;
+        input[type="text"] {
+            padding: 12px 18px;
+            font-size: 1.1em;
+            border: 1px solid #0a1f33;
+            border-radius: 8px;
+            background: #0d2840; /* Input arka planı */
+            color: #e0e0e0;
+            width: 80%;
+            max-width: 300px;
             text-align: center;
+            outline: none;
+            transition: border-color 0.3s ease;
         }
-
+        input[type="text"]:focus {
+            border-color: #53d6ff; /* Odaklandığında renk */
+        }
         input::placeholder {
-            color: rgba(255,255,255,0.7);
+            color: rgba(224, 224, 224, 0.6);
         }
 
+        /* Butonlar */
         button {
-            padding: 15px 30px;
-            font-size: 18px;
+            padding: 12px 25px;
+            font-size: 1.1em;
             border: none;
-            border-radius: 10px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 8px;
+            background: #e94560; /* Canlı kırmızı tonu */
             color: #fff;
             cursor: pointer;
-            margin: 10px;
-            transition: transform 0.2s;
+            margin-top: 15px;
+            transition: background 0.3s ease, transform 0.2s ease;
+            outline: none;
         }
-
         button:hover {
-            transform: scale(1.05);
+            background: #d43b55;
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
         }
 
+        /* Oyun Alanı */
         .game-area {
-            display: none;
+            display: none; /* JS ile gösterilecek */
         }
 
+        /* Oyuncu Kartları */
         .players-section {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
+            justify-content: space-around;
             align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap; /* Küçük ekranlarda alt alta gelmesi için */
         }
-
         .player-card {
-            background: rgba(255,255,255,0.1);
+            background: #1a1a2e; /* Kart arka planı */
             padding: 20px;
-            border-radius: 15px;
-            width: 300px;
-            border: 2px solid transparent;
-        }
-
-        .my-card {
-            border-color: #4ecdc4;
-        }
-
-        .opponent-card {
-            border-color: #ff6b6b;
-        }
-
-        .vs-line {
-            width: 200px;
-            height: 4px;
-            background: linear-gradient(90deg, #4ecdc4, #ff6b6b);
-            margin: 0 20px;
-            border-radius: 2px;
-            position: relative;
-        }
-
-        .vs-text {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #000;
-            padding: 5px 15px;
             border-radius: 10px;
+            width: 45%; /* Yan yana durmaları için */
+            min-width: 250px; /* Minimum genişlik */
+            margin: 10px; /* Aralarındaki boşluk */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .player-card h3 {
+            margin-bottom: 10px;
+            color: #e0e0e0;
+        }
+        .player-card div {
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        .my-card {
+            border: 2px solid #53d6ff; /* Mavi çerçeve */
+        }
+        .opponent-card {
+            border: 2px solid #e94560; /* Kırmızı çerçeve */
+        }
+
+        /* VS Metni */
+        .vs-text {
+            font-size: 1.8em;
             font-weight: bold;
+            color: #e0e0e0;
+            margin: 0 15px;
         }
 
+        /* Arama Ekranı */
         .searching {
-            text-align: center;
-            padding: 50px;
+            padding: 40px;
         }
-
         .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255,255,255,0.3);
-            border-top: 4px solid #4ecdc4;
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(224, 224, 224, 0.3);
+            border-top: 4px solid #53d6ff; /* Spinner rengi */
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
         }
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        #searchTime {
+            font-size: 1.1em;
+            margin-top: 15px;
+        }
 
+        /* Geri Sayım */
+        #countdownArea {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: #53d6ff;
+            margin: 25px 0;
+            text-shadow: 0 0 10px rgba(83, 214, 255, 0.5);
+        }
+
+        /* Metin Alanı */
         .text-area {
-            background: rgba(255,255,255,0.1);
-            padding: 30px;
-            border-radius: 15px;
+            background: #0d2840; /* Metin alanı arka planı */
+            padding: 25px;
+            border-radius: 10px;
             margin: 20px 0;
-            font-size: 20px;
-            line-height: 1.6;
-            min-height: 150px;
+            font-size: 1.2em;
+            line-height: 1.7;
+            min-height: 130px; /* Minimum yükseklik */
             display: flex;
             align-items: center;
             justify-content: center;
+            text-align: left; /* Metni sola hizala */
+            overflow-wrap: break-word; /* Uzun kelimeleri kırmak için */
+            white-space: pre-wrap; /* Boşlukları ve yeni satırları koru */
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
         }
 
+        /* Yazma Inputu */
         .typing-input {
             width: 100%;
-            padding: 20px;
-            font-size: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 10px;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            margin-top: 20px;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 1px solid #0a1f33;
+            border-radius: 8px;
+            background: #0d2840;
+            color: #e0e0e0;
+            margin-top: 15px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .typing-input:focus {
+            border-color: #e94560; /* Odaklandığında renk */
         }
 
+        /* İlerleme Çubukları */
         .progress-bars {
             display: flex;
             justify-content: space-between;
-            margin: 20px 0;
+            margin: 25px 0;
+            flex-wrap: wrap;
         }
-
         .progress-container {
             width: 48%;
-            text-align: center;
+            min-width: 280px;
+            margin: 10px 0;
+            text-align: left; /* İsimleri sola hizala */
         }
-
+        .progress-container div:first-child {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
         .progress-bar {
             width: 100%;
-            height: 30px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 15px;
+            height: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
             overflow: hidden;
-            margin-top: 10px;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
         }
-
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+            background: #53d6ff; /* Mavi dolgu */
             width: 0%;
             transition: width 0.3s ease;
-            border-radius: 15px;
+            border-radius: 12px;
         }
-
         .opponent-progress .progress-fill {
-            background: linear-gradient(90deg, #ff6b6b, #ff8a80);
+            background: #e94560; /* Kırmızı dolgu */
         }
 
+        /* Yazı Renklendirme */
+        .correct-char {
+            color: #53d6ff; /* Doğru yazılan karakter */
+        }
+        .wrong-char {
+            color: #e94560; /* Yanlış yazılan karakter */
+            text-decoration: underline; /* Yanlışı belirginleştir */
+        }
+        .current-char {
+            background: #e0e0e0; /* Şu anki karakterin arka planı */
+            color: #1a1a2e; /* Şu anki karakterin metin rengi */
+            padding: 1px 0px; /* Hafif dolgu */
+            border-radius: 2px;
+        }
+
+        /* Kazanan Mesajı */
         .winner-message {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.9);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none; /* JS ile gösterilecek */
+        }
+        .winner-content {
+            background: #16213e;
             padding: 40px;
             border-radius: 20px;
             text-align: center;
-            font-size: 24px;
-            z-index: 1000;
-            display: none;
+            font-size: 1.4em;
+            box-shadow: 0 0 30px rgba(83, 214, 255, 0.5); /* Hafif parlama */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 500px;
+            width: 90%;
+        }
+        .winner-content h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #53d6ff;
+        }
+        .winner-content p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .winner-content button {
+            background: #e94560;
+            padding: 12px 30px;
+            font-size: 1.2em;
         }
 
-        .status-message {
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            background: rgba(78, 205, 196, 0.2);
-            border: 1px solid #4ecdc4;
-        }
-
-        .correct-char {
-            color: #4ecdc4;
-            background: rgba(78, 205, 196, 0.2);
-        }
-
-        .wrong-char {
-            color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.2);
-        }
-
-        .current-char {
-            background: #fff;
-            color: #000;
+        /* Responsive Ayarlamalar */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.2em;
+            }
+            .player-card {
+                width: 90%; /* Küçük ekranlarda tek sütun */
+            }
+            .players-section {
+                flex-direction: column;
+            }
+            .vs-text {
+                margin: 15px 0;
+            }
+            .progress-container {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">⚡ HIZLI YAZMA SAVAŞI ⚡</div>
-        
-        <!-- Giriş Ekranı -->
-        <div id="loginScreen" class="login-screen">
-            <h2 style="margin-bottom: 30px;">Oyuna Katıl</h2>
+        <div class="logo">HIZLI YAZMA YARIŞI</div>
+
+        <div id="loginScreen" class="screen-panel">
+            <h2 style="margin-bottom: 25px; color: #e0e0e0;">Oyuna Katıl</h2>
             <div class="input-group">
                 <input type="text" id="playerName" placeholder="Adınızı girin..." maxlength="20">
             </div>
-            <button onclick="joinGame()">🎮 OYUNA BAŞLA</button>
+            <button onclick="joinGame()">OYUNA BAŞLA</button>
         </div>
 
-        <!-- Oyun Alanı -->
         <div id="gameArea" class="game-area">
-            <!-- Arama Ekranı -->
-            <div id="searchingScreen" class="searching">
+            <div id="searchingScreen" class="screen-panel searching">
                 <div class="spinner"></div>
                 <h2>Rakip Aranıyor...</h2>
-                <p>En yakın seviyedeki oyuncu bulunuyor</p>
-                <div id="searchTime" style="margin-top: 20px; font-size: 18px;">⏱️ 0 saniye</div>
+                <p>En uygun seviyedeki oyuncu bulunuyor.</p>
+                <div id="searchTime" style="margin-top: 20px;">⏱️ 0 saniye</div>
             </div>
 
-            <!-- Oyun Ekranı -->
-            <div id="gameScreen" style="display: none;">
+            <div id="gameScreen" class="screen-panel" style="display: none;">
                 <div class="players-section">
                     <div class="player-card my-card">
                         <h3>👤 <span id="myName">Sen</span></h3>
-                        <div style="margin-top: 10px; font-size: 16px;">
-                            <div>⚡ Hız: <span id="mySpeed">0</span> KDK</div>
+                        <div style="margin-top: 10px;">
+                            <div>⚡ Hız: <span id="mySpeed">0</span> K/DK</div>
                             <div>🎯 Doğruluk: <span id="myAccuracy">100</span>%</div>
                         </div>
                     </div>
-                    
-                    <div class="vs-line">
-                        <div class="vs-text">VS</div>
-                    </div>
-                    
+                    <div class="vs-text">VS</div>
                     <div class="player-card opponent-card">
                         <h3>🤖 <span id="opponentName">Rakip</span></h3>
-                        <div style="margin-top: 10px; font-size: 16px;">
-                            <div>⚡ Hız: <span id="opponentSpeed">0</span> KDK</div>
+                        <div style="margin-top: 10px;">
+                            <div>⚡ Hız: <span id="opponentSpeed">0</span> K/DK</div>
                             <div>🎯 Doğruluk: <span id="opponentAccuracy">100</span>%</div>
                         </div>
                     </div>
@@ -309,31 +371,29 @@
                     </div>
                 </div>
 
-                <div id="countdownArea" style="font-size: 3em; margin: 30px 0; display: none;">
+                <div id="countdownArea" style="display: none;">
                     <div id="countdown">3</div>
                 </div>
 
                 <div class="text-area" id="textDisplay">
                     Metin yükleniyor...
                 </div>
-
-                <input type="text" id="typingInput" class="typing-input" placeholder="Yazın..." disabled>
-                
-                <div id="statusMessage" class="status-message" style="display: none;"></div>
+                <input type="text" id="typingInput" class="typing-input" placeholder="Buraya yazın..." disabled>
             </div>
         </div>
 
-        <!-- Kazanan Mesajı -->
         <div id="winnerMessage" class="winner-message">
-            <h2 id="winnerText">🎉 TEBRİKLER! 🎉</h2>
-            <p id="winnerDetails">Kazandınız!</p>
-            <button onclick="startNewGame()" style="margin-top: 20px;">🔄 YENİ OYUN</button>
+            <div class="winner-content">
+                <h2 id="winnerText">🎉 TEBRİKLER! 🎉</h2>
+                <p id="winnerDetails">Detaylar buraya gelecek.</p>
+                <button onclick="startNewGame()">YENİ OYUN</button>
+            </div>
         </div>
     </div>
 
     <script>
         let playerName = '';
-        let gameState = 'login';
+        let gameState = 'login'; // login, searching, countdown, playing, finished
         let currentText = '';
         let typedText = '';
         let gameStartTime = 0;
@@ -341,100 +401,118 @@
         let opponentData = null;
         let myProgress = 0;
         let opponentProgress = 0;
-        let gameId = '';
         let mySpeed = 0;
         let myAccuracy = 100;
+        let countdownIntervalId;
+        let opponentTypingIntervalId;
 
-        // Uzun metinler
+        // Metinler
         const gameParagraphs = [
-            "Teknoloji hayatımızın her alanına girmiş durumda. Akıllı telefonlar, bilgisayarlar ve internet sayesinde dünya çok daha küçük hale geldi. İnsanlar artık dünyanın her yerinden birbiriyle iletişim kurabiliyor, bilgi paylaşabiliyor ve ticaret yapabiliyor. Bu durum hem avantajlar hem de dezavantajlar getiriyor. Bir yandan hayatımız kolaylaşırken, diğer yandan teknoloji bağımlılığı gibi sorunlarla karşılaşıyoruz.",
-            
-            "Çevre koruma konusu günümüzün en önemli sorunlarından biri haline geldi. İklim değişikliği, orman yangınları, deniz kirliliği ve hava kirliliği gibi problemler tüm dünyayı etkiliyor. Bu sorunların çözümü için hem bireysel hem de toplumsal çabalar gerekiyor. Geri dönüşüm yaparak, enerji tasarrufu sağlayarak ve doğa dostu ürünler kullanarak çevreye katkıda bulunabiliriz. Gelecek nesillere yaşanabilir bir dünya bırakmanın sorumluluğu hepimizin.",
-            
-            "Spor sadece fiziksel sağlığımız için değil, mental sağlığımız için de çok önemlidir. Düzenli egzersiz yapmanın sayısız faydası vardır. Kalp sağlığını korur, kasları güçlendirir, kemikleri sağlamlaştırır ve bağışıklık sistemini güçlendirir. Aynı zamanda stres azaltır, ruh halini iyileştirir ve özgüveni artırır. Spor yapmak için büyük spor salonlarına gitmenize gerek yok, evde bile basit egzersizlerle forma kalabilirsiniz.",
-            
-            "Okuma alışkanlığı geliştirmenin birçok faydası vardır. Kitaplar hayal gücümüzü geliştirir, kelime dağarcığımızı zenginleştirir ve düşünme becerimizi artırır. Farklı kültürlerden, farklı dönemlerden hikayeler okuyarak perspektifimizi genişletiriz. Bilim, tarih, felsefe gibi konularda bilgimizi derinleştiririz. Dijital çağda televizyon ve sosyal medya karşısında kitap okumak giderek zorlaşsa da, bu alışkanlığı korumak için çaba göstermeliyiz.",
-            
-            "Yemek pişirmek hem sanat hem de bilimdir. İyi bir yemek için sadece tarifi takip etmek yeterli değildir, malzemelerin kalitesi, pişirme teknikleri ve zamanlaması da çok önemlidir. Her mutfağın kendine özgü gelenekleri, baharatları ve pişirme yöntemleri vardır. Türk mutfağı da dünyada sayılı zengin mutfaklar arasında yer alır. Kebaplarımız, böreklerimiz, tatlılarımız ve çorbalarımız ile tanınırız. Evde yemek pişirmek hem sağlıklı hem de ekonomik bir tercihtir."
+            "Programlama, modern dünyayı şekillendiren temel bir beceridir. Algoritmalar ve veri yapıları aracılığıyla bilgisayarlara ne yapmaları gerektiğini söylemeyi içerir. Python, JavaScript ve Java gibi diller, farklı uygulamalar geliştirmek için yaygın olarak kullanılır. Sürekli öğrenme ve problem çözme, bu alandaki ilerlemenin anahtarıdır.",
+            "Yapay zeka, makinelerin insan benzeri zekayı taklit etmesini sağlayan bir teknolojidir. Makine öğrenimi ve derin öğrenme, yapay zekanın alt dallarıdır ve veri analizi ile modellerin eğitilmesini içerir. Otomasyon, doğal dil işleme ve görüntü tanıma gibi birçok alanda devrim yaratmaktadır. Gelecekteki potansiyeli sınırsızdır.",
+            "İnternet, bilgiye erişimimizi ve küresel iletişimi kökten değiştirmiştir. Web siteleri, sosyal medya platformları ve çevrimiçi hizmetler aracılığıyla milyarlarca insan birbirine bağlıdır. Siber güvenlik, bu dijital dünyanın vazgeçilmez bir parçasıdır. Bilgiyi korumak ve güvenli bir çevrimiçi deneyim sağlamak hayati önem taşır.",
+            "Veri bilimi, büyük veri kümelerinden anlamlı içgörüler çıkarmak için istatistik, bilgisayar bilimi ve alan bilgisini birleştiren bir disiplindir. İşletmelerin daha iyi kararlar almasına, bilimsel araştırmaların ilerlemesine ve yeni ürünlerin geliştirilmesine yardımcı olur. Temiz veri, doğru analizler için kritik bir adımdır.",
+            "Bulut bilişim, internet üzerinden bilgi işlem hizmetleri sağlamak anlamına gelir. Depolama, sunucular, veritabanları, ağ oluşturma ve yazılım gibi hizmetleri içerir. İşletmelerin altyapı maliyetlerini düşürmesine ve ölçeklenebilirlik sağlamasına olanak tanır. Amazon Web Services (AWS) ve Microsoft Azure gibi platformlar bu alana öncülük etmektedir."
         ];
 
-        // Botlar için isimler
+        // Bot isimleri
         const botNames = [
-            "TurboYazar", "HızlıParmak", "KlavyeKralı", "YazımUstası", "SüratliSavaşçı",
-            "TekstTerminator", "HızAslanı", "YazmaYıldızı", "KarakterKahraman", "TuşTornado",
-            "ŞimşekYazar", "RüzgarRakip", "AtışanAteş", "VelozVampir", "NinjaYazıcı"
+            "Yazılım Robotu", "Algoritma Botu", "Siber Hız", "Veri Canavarı", "Bulut Botu",
+            "Kod Kaplanı", "Piksel Paladin", "Binar Baron", "Ağ Şampiyonu", "Yazılım Şeyhi"
         ];
+
+        // DOM Elementlerini al
+        const loginScreen = document.getElementById('loginScreen');
+        const gameArea = document.getElementById('gameArea');
+        const searchingScreen = document.getElementById('searchingScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const playerNameInput = document.getElementById('playerName');
+        const myNameDisplay = document.getElementById('myName');
+        const myName2Display = document.getElementById('myName2');
+        const opponentNameDisplay = document.getElementById('opponentName');
+        const opponentName2Display = document.getElementById('opponentName2');
+        const searchTimeDisplay = document.getElementById('searchTime');
+        const countdownArea = document.getElementById('countdownArea');
+        const countdownDisplay = document.getElementById('countdown');
+        const textDisplay = document.getElementById('textDisplay');
+        const typingInput = document.getElementById('typingInput');
+        const myProgressFill = document.getElementById('myProgress');
+        const opponentProgressFill = document.getElementById('opponentProgress');
+        const mySpeedDisplay = document.getElementById('mySpeed');
+        const myAccuracyDisplay = document.getElementById('myAccuracy');
+        const opponentSpeedDisplay = document.getElementById('opponentSpeed');
+        const opponentAccuracyDisplay = document.getElementById('opponentAccuracy');
+        const winnerMessage = document.getElementById('winnerMessage');
+        const winnerTextDisplay = document.getElementById('winnerText');
+        const winnerDetailsDisplay = document.getElementById('winnerDetails');
 
         function joinGame() {
-            const nameInput = document.getElementById('playerName');
-            if (!nameInput.value.trim()) {
+            if (!playerNameInput.value.trim()) {
                 alert('Lütfen adınızı girin!');
                 return;
             }
-            
-            playerName = nameInput.value.trim();
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('gameArea').style.display = 'block';
-            
+            playerName = playerNameInput.value.trim();
+            loginScreen.style.display = 'none';
+            gameArea.style.display = 'block';
             startSearching();
         }
 
         function startSearching() {
             gameState = 'searching';
             searchStartTime = Date.now();
-            document.getElementById('searchingScreen').style.display = 'block';
-            document.getElementById('gameScreen').style.display = 'none';
-            
+            searchingScreen.style.display = 'block';
+            gameScreen.style.display = 'none';
             updateSearchTimer();
-            
-            // 2-5 saniye arası rastgele süre sonra rakip bul
-            const searchDuration = Math.random() * 3000 + 2000;
+
+            // 2-4 saniye arası rastgele süre sonra rakip bul
+            const searchDuration = Math.random() * 2000 + 2000;
             setTimeout(foundOpponent, searchDuration);
         }
 
         function updateSearchTimer() {
             if (gameState !== 'searching') return;
-            
             const elapsed = Math.floor((Date.now() - searchStartTime) / 1000);
-            document.getElementById('searchTime').textContent = `⏱️ ${elapsed} saniye`;
-            
-            setTimeout(updateSearchTimer, 1000);
+            searchTimeDisplay.textContent = `⏱️ ${elapsed} saniye`;
+            requestAnimationFrame(updateSearchTimer); // Daha akıcı bir zamanlayıcı için
         }
 
         function foundOpponent() {
             // Rastgele bot ismi seç
             const opponentName = botNames[Math.floor(Math.random() * botNames.length)];
-            
+
+            // Botun hızını oyuncunun hızına yakın tutmak için (örneğin ortalama bir değer)
+            // Bu kısım gerçek çok oyunculu oyunda sunucudan gelmeli
             opponentData = {
                 name: opponentName,
-                speed: Math.floor(Math.random() * 100) + 30, // 30-130 arası hız
-                accuracy: Math.floor(Math.random() * 20) + 80 // 80-100 arası doğruluk
+                speed: Math.floor(Math.random() * 80) + 40, // 40-120 K/DK arası hız
+                accuracy: Math.floor(Math.random() * 10) + 90 // 90-100% arası doğruluk
             };
-            
-            document.getElementById('myName').textContent = playerName;
-            document.getElementById('myName2').textContent = playerName;
-            document.getElementById('opponentName').textContent = opponentName;
-            document.getElementById('opponentName2').textContent = opponentName;
-            
-            document.getElementById('searchingScreen').style.display = 'none';
-            document.getElementById('gameScreen').style.display = 'block';
-            
-            setTimeout(startCountdown, 1000);
+
+            myNameDisplay.textContent = playerName;
+            myName2Display.textContent = playerName;
+            opponentNameDisplay.textContent = opponentData.name;
+            opponentName2Display.textContent = opponentData.name;
+
+            searchingScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+
+            startCountdown();
         }
 
         function startCountdown() {
-            document.getElementById('countdownArea').style.display = 'block';
+            gameState = 'countdown';
+            countdownArea.style.display = 'block';
             let count = 3;
-            
-            const countdownInterval = setInterval(() => {
+            countdownDisplay.textContent = count;
+
+            countdownIntervalId = setInterval(() => {
+                count--;
                 if (count > 0) {
-                    document.getElementById('countdown').textContent = count;
-                    count--;
+                    countdownDisplay.textContent = count;
                 } else if (count === 0) {
-                    document.getElementById('countdown').textContent = 'BAŞLA!';
-                    count--;
+                    countdownDisplay.textContent = 'BAŞLA!';
                 } else {
-                    clearInterval(countdownInterval);
+                    clearInterval(countdownIntervalId);
                     startGame();
                 }
             }, 1000);
@@ -442,29 +520,31 @@
 
         function startGame() {
             gameState = 'playing';
-            document.getElementById('countdownArea').style.display = 'none';
-            
+            countdownArea.style.display = 'none';
+            typingInput.value = ''; // Inputu temizle
+
             // Rastgele metin seç
             currentText = gameParagraphs[Math.floor(Math.random() * gameParagraphs.length)];
             displayText();
-            
-            const typingInput = document.getElementById('typingInput');
+
             typingInput.disabled = false;
             typingInput.focus();
             typingInput.addEventListener('input', handleTyping);
-            
+
             gameStartTime = Date.now();
             myProgress = 0;
             opponentProgress = 0;
             typedText = '';
-            
+            mySpeed = 0;
+            myAccuracy = 100;
+            updateStats(); // İstatistikleri sıfırla
+
             // Bot'un yazmasını simüle et
             simulateOpponentTyping();
-            updateStats();
         }
 
         function displayText() {
-            document.getElementById('textDisplay').innerHTML = formatText();
+            textDisplay.innerHTML = formatText();
         }
 
         function formatText() {
@@ -488,114 +568,178 @@
 
         function handleTyping(e) {
             if (gameState !== 'playing') return;
-            
-            typedText = e.target.value;
+
+            const newTypedText = e.target.value;
+
+            // Sadece son karakteri kontrol et (geri tuşu ile silme durumunda hata olmaması için)
+            if (newTypedText.length < typedText.length) { // Geri tuşu basıldıysa
+                typedText = newTypedText;
+            } else if (newTypedText.length > typedText.length) { // Yeni karakter eklendiyse
+                const lastCharTyped = newTypedText[newTypedText.length - 1];
+                const expectedChar = currentText[newTypedText.length - 1];
+
+                if (lastCharTyped === expectedChar) {
+                    typedText = newTypedText;
+                } else {
+                    // Yanlış karakter basıldıysa ve düzeltilmediyse ilerlemesine izin verme
+                    // Bu, kullanıcının yanlış yazmasını engelleyen bir yaklaşımdır.
+                    // Eğer yanlış yazmaya izin verip sonra düzeltmesini istersen, bu `if` bloğunu kaldır.
+                    e.target.value = typedText;
+                    // Alternatif olarak, yanlış karakteri de typedText'e ekleyip doğruluk hesaplamasını ona göre yapabilirsin.
+                    // Şu anki kod yanlış yazmaya izin veriyor, ama doğru ilerleyebilmek için silmeyi gerektiriyor.
+                    // Ben senin orijinal kodunun mantığını korudum.
+                    typedText = newTypedText;
+                }
+            } else { // Aynı uzunlukta ama içeriği değişmiş olabilir (seçip yapıştırma vb.)
+                typedText = newTypedText;
+            }
+
             displayText();
-            
+
             myProgress = (typedText.length / currentText.length) * 100;
-            document.getElementById('myProgress').style.width = myProgress + '%';
-            
+            myProgressFill.style.width = myProgress + '%';
+
             // İstatistikleri güncelle
             updateStats();
-            
+
             // Oyun bitişini kontrol et
-            if (typedText.length >= currentText.length) {
+            if (typedText.length === currentText.length && typedText === currentText) {
                 endGame('win');
             }
         }
 
         function simulateOpponentTyping() {
             if (gameState !== 'playing') return;
-            
-            const baseSpeed = opponentData.speed;
-            const variation = Math.random() * 40 - 20; // -20 ile +20 arası değişim
-            const currentSpeed = Math.max(20, baseSpeed + variation);
-            
-            // WPM'den karakter/saniye'ye çevir (ortalama 5 karakter/kelime)
-            const charsPerSecond = (currentSpeed * 5) / 60;
-            const delay = 1000 / charsPerSecond;
-            
-            setTimeout(() => {
-                if (gameState === 'playing' && opponentProgress < 100) {
-                    opponentProgress += (100 / currentText.length);
-                    opponentProgress = Math.min(100, opponentProgress);
-                    
-                    document.getElementById('opponentProgress').style.width = opponentProgress + '%';
-                    document.getElementById('opponentSpeed').textContent = Math.floor(currentSpeed);
-                    
-                    if (opponentProgress >= 100) {
-                        endGame('lose');
-                    } else {
-                        simulateOpponentTyping();
-                    }
+
+            const baseSpeed = opponentData.speed; // K/DK
+            const accuracyRate = opponentData.accuracy / 100;
+
+            // Saniyede ortalama karakter sayısı (KDK / 60)
+            const charsPerSecond = baseSpeed / 60;
+            const delayBetweenChars = 1000 / charsPerSecond;
+
+            const simulateChar = () => {
+                if (gameState !== 'playing' || opponentProgress >= 100) {
+                    clearInterval(opponentTypingIntervalId);
+                    return;
                 }
-            }, delay);
+
+                // Doğruluk oranına göre yanlış yazma simülasyonu
+                const currentOpponentCharIndex = Math.floor(currentText.length * (opponentProgress / 100));
+                if (currentOpponentCharIndex < currentText.length) {
+                    if (Math.random() < accuracyRate) {
+                        // Doğru karakteri yaz
+                        opponentProgress += (100 / currentText.length);
+                    } else {
+                        // Yanlış karakteri yaz, sonra "geri al" ve doğruyu yaz simülasyonu
+                        // Bu daha gerçekçi bir bot hatası olur
+                        opponentProgress += (100 / currentText.length) * 0.5; // Yarım ilerle
+                        setTimeout(() => {
+                            if (gameState === 'playing') {
+                                opponentProgress += (100 / currentText.length) * 0.5; // Kalan yarım ilerle
+                                updateOpponentProgress();
+                            }
+                        }, delayBetweenChars * 1.5); // Hata düzeltme süresi
+                    }
+                } else {
+                    opponentProgress = 100; // Son karakteri de yazdıysa
+                }
+
+                opponentProgress = Math.min(100, opponentProgress);
+                updateOpponentProgress();
+
+                if (opponentProgress >= 100) {
+                    endGame('lose');
+                    clearInterval(opponentTypingIntervalId);
+                }
+            };
+
+            // setInterval yerine tek tek setTimeout zinciri oluşturarak daha dinamik kontrol
+            const typeNextChar = () => {
+                if (gameState === 'playing' && opponentProgress < 100) {
+                    simulateChar();
+                    const currentDelay = delayBetweenChars * (0.8 + Math.random() * 0.4); // Hızda hafif değişim
+                    opponentTypingIntervalId = setTimeout(typeNextChar, currentDelay);
+                }
+            };
+            typeNextChar();
         }
 
+        function updateOpponentProgress() {
+            opponentProgressFill.style.width = opponentProgress + '%';
+            opponentSpeedDisplay.textContent = opponentData.speed; // Botun hızı sabit kalır
+            opponentAccuracyDisplay.textContent = opponentData.accuracy; // Botun doğruluğu sabit kalır
+        }
+
+
         function updateStats() {
-            if (typedText.length === 0) return;
-            
-            const timeElapsed = (Date.now() - gameStartTime) / 1000 / 60; // dakika cinsinden
-            const wordsTyped = typedText.length / 5; // ortalama 5 karakter/kelime
-            mySpeed = Math.floor(wordsTyped / timeElapsed) || 0;
-            
-            // Doğruluk hesapla
-            let correctChars = 0;
-            for (let i = 0; i < typedText.length; i++) {
-                if (typedText[i] === currentText[i]) {
-                    correctChars++;
+            if (typedText.length === 0) {
+                mySpeed = 0;
+                myAccuracy = 100;
+            } else {
+                const timeElapsed = (Date.now() - gameStartTime) / 1000 / 60; // dakika cinsinden
+                // K/DK (Karakter/Dakika) için direkt karakter sayısını kullan
+                mySpeed = timeElapsed > 0 ? Math.floor(typedText.length / timeElapsed) : 0;
+
+                // Doğruluk hesapla
+                let correctChars = 0;
+                for (let i = 0; i < typedText.length; i++) {
+                    if (i < currentText.length && typedText[i] === currentText[i]) {
+                        correctChars++;
+                    }
                 }
+                myAccuracy = typedText.length > 0 ? Math.floor((correctChars / typedText.length) * 100) : 100;
             }
-            myAccuracy = Math.floor((correctChars / typedText.length) * 100) || 100;
-            
-            document.getElementById('mySpeed').textContent = mySpeed;
-            document.getElementById('myAccuracy').textContent = myAccuracy;
+
+            mySpeedDisplay.textContent = mySpeed;
+            myAccuracyDisplay.textContent = myAccuracy;
         }
 
         function endGame(result) {
             gameState = 'finished';
-            document.getElementById('typingInput').disabled = true;
-            
-            const winnerMessage = document.getElementById('winnerMessage');
-            const winnerText = document.getElementById('winnerText');
-            const winnerDetails = document.getElementById('winnerDetails');
-            
+            typingInput.disabled = true;
+            clearInterval(countdownIntervalId);
+            clearTimeout(opponentTypingIntervalId); // Botun yazmasını durdur
+
             if (result === 'win') {
-                winnerText.textContent = '🎉 TEBRİKLER! KAZANDINIZ! 🎉';
-                winnerDetails.innerHTML = `
+                winnerTextDisplay.textContent = '🎉 TEBRİKLER! KAZANDINIZ! 🎉';
+                winnerDetailsDisplay.innerHTML = `
                     <div style="margin: 20px 0;">
-                        <div>⚡ Final Hızınız: ${mySpeed} KDK</div>
-                        <div>🎯 Doğruluk Oranınız: ${myAccuracy}%</div>
+                        <div><strong>⚡ Son Hızınız:</strong> ${mySpeed} K/DK</div>
+                        <div><strong>🎯 Doğruluk Oranınız:</strong> ${myAccuracy}%</div>
                         <div>🏆 ${opponentData.name} adlı rakibinizi geçtiniz!</div>
                     </div>
                 `;
             } else {
-                winnerText.textContent = '😔 KAYBETTINIZ';
-                winnerDetails.innerHTML = `
+                winnerTextDisplay.textContent = '😔 KAYBETTİNİZ';
+                winnerDetailsDisplay.innerHTML = `
                     <div style="margin: 20px 0;">
-                        <div>⚡ Final Hızınız: ${mySpeed} KDK</div>
-                        <div>🎯 Doğruluk Oranınız: ${myAccuracy}%</div>
+                        <div><strong>⚡ Son Hızınız:</strong> ${mySpeed} K/DK</div>
+                        <div><strong>🎯 Doğruluk Oranınız:</strong> ${myAccuracy}%</div>
                         <div>💔 ${opponentData.name} sizi geçti!</div>
                     </div>
                 `;
             }
-            
-            winnerMessage.style.display = 'block';
+            winnerMessage.style.display = 'flex'; // Flex ile ortala
         }
 
         function startNewGame() {
-            document.getElementById('winnerMessage').style.display = 'none';
-            document.getElementById('typingInput').value = '';
-            document.getElementById('myProgress').style.width = '0%';
-            document.getElementById('opponentProgress').style.width = '0%';
-            document.getElementById('mySpeed').textContent = '0';
-            document.getElementById('myAccuracy').textContent = '100';
-            
+            winnerMessage.style.display = 'none';
+            typingInput.value = '';
+            myProgressFill.style.width = '0%';
+            opponentProgressFill.style.width = '0%';
+            mySpeedDisplay.textContent = '0';
+            myAccuracyDisplay.textContent = '100';
+            opponentSpeedDisplay.textContent = '0';
+            opponentAccuracyDisplay.textContent = '100';
+            typedText = '';
+            currentText = ''; // Yeni oyun için metni sıfırla
+
             startSearching();
         }
 
         // Enter tuşu ile oyuna başlama
-        document.getElementById('playerName').addEventListener('keypress', function(e) {
+        playerNameInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 joinGame();
             }
